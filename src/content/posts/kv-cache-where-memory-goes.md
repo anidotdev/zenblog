@@ -1,22 +1,19 @@
 ---
 title: "KV cache: where inference memory goes"
-summary: A practical mental model for why autoregressive generation keeps
-  growing its memory footprint as the context gets longer.
+summary: "A practical mental model for why autoregressive generation keeps growing its memory footprint as the context gets longer."
 date: 2026-10-23
-draft: false
+draft: true
 featured: false
 tags:
   - llm inference
   - gpu memory
   - systems
-thumbnail: /images/posts/kv-cache.svg
-thumbnailAlt: Rows of key and value blocks accumulate as generated tokens extend the context.
-artifactSummary: "Draft: replace this illustration with a measurement or memory
-  estimate from a real run before publishing."
-caption: Conceptual illustration. The number and size of cached tensors depend
-  on the model architecture and runtime.
-updatedDate: 2026-10-24
+thumbnail: "/images/posts/kv-cache.svg"
+thumbnailAlt: "Rows of key and value blocks accumulate as generated tokens extend the context."
+artifactSummary: "Draft: replace this illustration with a measurement or memory estimate from a real run before publishing."
+caption: "Conceptual illustration. The number and size of cached tensors depend on the model architecture and runtime."
 ---
+
 The KV cache is easy to describe as a speed optimization. The more useful question is what it stores, why it prevents repeated work, and how its memory cost grows with the context.
 
 This article is a draft scaffold. Before publishing, replace the conceptual artifact with a measured example and state the model, precision, batch size, context length, and runtime used.
@@ -35,7 +32,7 @@ $$
 M_{KV} \approx 2 \times L \times B \times T \times H_{KV} \times D_H \times S
 $$
 
-where L is the number of layers, B is the effective batch size, T is cached sequence length, H_{KV} is the number of key/value heads, D_H is head dimension, and S is bytes per element. The leading two accounts for keys and values.
+where \(L\) is the number of layers, \(B\) is the effective batch size, \(T\) is cached sequence length, \(H_{KV}\) is the number of key/value heads, \(D_H\) is head dimension, and \(S\) is bytes per element. The leading two accounts for keys and values.
 
 This is an estimate, not an allocator-level measurement. Architecture choices such as multi-query or grouped-query attention, cache quantization, tensor parallelism, paging, and implementation details change how memory is represented or distributed.
 

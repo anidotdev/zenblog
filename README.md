@@ -24,6 +24,8 @@ npm install
 npm run dev
 ```
 
+The theme control uses the official `@lucide/astro` package and its `Contrast` icon. Use npm for dependency installation; the project intentionally does not include a stale pnpm lockfile.
+
 Astro prints the local development URL. Before publishing, run:
 
 ```bash

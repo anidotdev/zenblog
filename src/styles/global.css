@@ -168,29 +168,22 @@ h4 {
   width: 36px;
   height: 36px;
   padding: 0;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
+  border: 0;
+  border-radius: 4px;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  transition: var(--theme-transition), border-color 140ms ease, color 140ms ease;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 140ms ease;
 }
 
 .theme-toggle:hover {
   color: var(--ink);
-  border-color: var(--faint);
 }
 
-.theme-icon-sun {
-  display: none;
-}
-
-:root[data-theme="dark"] .theme-icon-sun {
+.theme-toggle-icon {
   display: block;
-}
-
-:root[data-theme="dark"] .theme-icon-moon {
-  display: none;
+  flex: 0 0 auto;
 }
 
 .visually-hidden {

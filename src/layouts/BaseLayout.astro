@@ -71,6 +71,37 @@ const isoDate = (value?: Date) => value?.toISOString();
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const toggle = document.querySelector('[data-theme-toggle]');
+        if (!(toggle instanceof HTMLButtonElement)) return;
+
+        const syncThemeControl = () => {
+          const isDark = root.dataset.theme === 'dark';
+          const label = isDark ? 'Switch to light theme' : 'Switch to dark theme';
+          toggle.setAttribute('aria-label', label);
+          toggle.setAttribute('title', label);
+          const labelNode = toggle.querySelector('[data-theme-toggle-label]');
+          if (labelNode) labelNode.textContent = label;
+          const themeColor = document.querySelector('meta[name="theme-color"]');
+          themeColor?.setAttribute('content', isDark ? '#11110f' : '#faf9f6');
+        };
+
+        toggle.addEventListener('click', () => {
+          const nextTheme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+          root.dataset.theme = nextTheme;
+          try {
+            localStorage.setItem('journal-theme', nextTheme);
+          } catch {
+            // Theme switching still works for the current page if storage is unavailable.
+          }
+          syncThemeControl();
+        });
+
+        syncThemeControl();
+      })();
+    </script>
     <footer class="site-footer page-shell">
       <p>© {new Date().getFullYear()} {site.name}</p>
       <a href={site.personalSite} target="_blank" rel="noreferrer">Personal site <span aria-hidden="true">↗</span></a>

@@ -92,7 +92,9 @@ Edit **Site settings** in Pages CMS or `src/data/site.json` directly:
 
 - `name`, `pitch`, and `description` control the identity and metadata.
 - `github`, `linkedin`, `x`, and `email` control the visible social links. Empty values are not rendered.
+- `personalSite` controls the personal-site link in the minimal footer.
 - `repositoryUrl` is a fallback source-repository link used by articles that do not override `repoUrl`.
+- The theme toggle switches between light and dark modes and remembers the preference in the browser.
 - `siteUrl` must be the real canonical production origin, for example `https://notes.example.com`.
 
 Set the same production URL as `PUBLIC_SITE_URL` in your hosting environment. Astro uses that value for canonical sitemap configuration. Do not leave `example.com` in production metadata.

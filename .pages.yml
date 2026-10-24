@@ -124,4 +124,8 @@ content:
         label: Main source repository URL
         type: string
         description: Used for article source links unless an article has its own repository URL.
+      - name: personalSite
+        label: Personal website URL
+        type: string
+        description: Link shown in the site footer.
 

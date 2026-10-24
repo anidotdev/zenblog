@@ -6,12 +6,38 @@
   --faint: #89867f;
   --rule: #e5e2dc;
   --accent: #873333;
+  --accent-soft: #87333325;
+  --accent-line: #87333380;
   --code-paper: #f1efea;
+  --image-paper: #f0eee8;
+  --figure-paper: #f4f2ed;
+  --inline-code-ink: #542a2a;
+  --prose-italic: #494741;
+  --scroll-thumb: #c7c2b8;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --reading-width: 66ch;
   --site-width: 860px;
+  --theme-transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #11110f;
+  --ink: #eeece6;
+  --muted: #aaa69e;
+  --faint: #817d75;
+  --rule: #33322e;
+  --accent: #d38b84;
+  --accent-soft: #d38b842b;
+  --accent-line: #d38b8488;
+  --code-paper: #1d1d1a;
+  --image-paper: #1b1b18;
+  --figure-paper: #1b1b18;
+  --inline-code-ink: #e8b0aa;
+  --prose-italic: #c6c1b8;
+  --scroll-thumb: #555149;
 }
 
 *,
@@ -24,6 +50,8 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 1.5rem;
   background: var(--paper);
+  color: var(--ink);
+  transition: var(--theme-transition);
 }
 
 body {
@@ -31,6 +59,7 @@ body {
   min-width: 320px;
   background: var(--paper);
   color: var(--ink);
+  transition: var(--theme-transition);
   font-family: var(--sans);
   font-size: 16px;
   font-weight: 400;
@@ -42,7 +71,7 @@ body {
 
 ::selection {
   color: var(--ink);
-  background: #87333325;
+  background: var(--accent-soft);
 }
 
 img,
@@ -60,7 +89,7 @@ a {
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  text-decoration-color: #87333380;
+  text-decoration-color: var(--accent-line);
 }
 
 a:hover {
@@ -125,10 +154,55 @@ h4 {
 
 .site-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   min-height: 64px;
   padding-block: 1.1rem 0.6rem;
+}
+
+.theme-toggle {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: var(--theme-transition), border-color 140ms ease, color 140ms ease;
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+  border-color: var(--faint);
+}
+
+.theme-icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-icon-sun {
+  display: block;
+}
+
+:root[data-theme="dark"] .theme-icon-moon {
+  display: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .social-nav {
@@ -168,10 +242,11 @@ h4 {
 
 .intro h1 {
   margin: 0 0 0.8rem;
-  font-size: clamp(3.15rem, 8vw, 4.8rem);
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 0.98;
+  font-family: var(--sans);
+  font-size: clamp(2.2rem, 5.2vw, 3.15rem);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 1.08;
 }
 
 .intro-pitch {
@@ -200,7 +275,7 @@ h4 {
   display: block;
   overflow: hidden;
   aspect-ratio: 1.24 / 1;
-  background: #f0eee8;
+  background: var(--image-paper);
   text-decoration: none;
 }
 
@@ -379,7 +454,7 @@ h4 {
   width: 100%;
   max-height: 480px;
   object-fit: contain;
-  background: #f4f2ed;
+  background: var(--figure-paper);
 }
 
 .artifact-figure figcaption {
@@ -458,7 +533,7 @@ h4 {
 }
 
 .prose em {
-  color: #494741;
+  color: var(--prose-italic);
 }
 
 .prose ul,
@@ -516,7 +591,7 @@ h4 {
 .prose :not(pre) > code {
   padding: 0.1em 0.28em;
   background: var(--code-paper);
-  color: #542a2a;
+  color: var(--inline-code-ink);
   font-family: var(--code);
   font-size: 0.75em;
   overflow-wrap: anywhere;
@@ -532,12 +607,24 @@ h4 {
   color: var(--ink);
   font: 400 0.78rem/1.75 var(--code);
   tab-size: 4;
-  scrollbar-color: #c7c2b8 transparent;
+  scrollbar-color: var(--scroll-thumb) transparent;
   scrollbar-width: thin;
 }
 
 .prose pre code {
   font: inherit;
+}
+
+/* Astro/Shiki emits per-token light and dark CSS variables. The selected
+   document theme controls which palette is visible, independent of OS theme. */
+.prose pre.astro-code,
+.prose pre.astro-code span {
+  color: var(--shiki-light, var(--ink));
+}
+
+:root[data-theme="dark"] .prose pre.astro-code,
+:root[data-theme="dark"] .prose pre.astro-code span {
+  color: var(--shiki-dark, var(--ink)) !important;
 }
 
 .prose table {
@@ -587,6 +674,32 @@ h4 {
   border-top: 1px solid var(--rule);
 }
 
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  padding-block: 1rem 1.35rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font: 400 0.75rem/1.5 var(--sans);
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .error-page {
   min-height: 65vh;
   padding-top: clamp(5rem, 12vw, 8rem);
@@ -610,13 +723,21 @@ h4 {
 
   .site-header {
     min-height: auto;
-    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0.6rem;
     padding-top: 1rem;
   }
 
   .social-nav {
-    gap: 0.5rem 1rem;
-    font-size: 0.78rem;
+    flex: 1 1 auto;
+    justify-content: flex-start;
+    gap: 0.5rem 0.9rem;
+    font-size: 0.76rem;
+  }
+
+  .theme-toggle {
+    width: 34px;
+    height: 34px;
   }
 
   .home-main {
@@ -628,7 +749,8 @@ h4 {
   }
 
   .intro h1 {
-    font-size: clamp(3rem, 12vw, 4.2rem);
+    font-size: clamp(2.1rem, 8vw, 2.75rem);
+    letter-spacing: -0.055em;
   }
 
   .post-card,
@@ -662,6 +784,12 @@ h4 {
 
 .post-list .post-card:first-child {
     padding-top: 1.4rem;
+  }
+
+  .site-footer {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
   }
 
   .article-shell {

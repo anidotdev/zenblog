@@ -34,7 +34,19 @@ const isoDate = (value?: Date) => value?.toISOString();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#faf9f6" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
+    <script is:inline>
+      (() => {
+        let savedTheme = null;
+        try {
+          savedTheme = localStorage.getItem('journal-theme');
+        } catch {
+          // Storage may be unavailable; fall back to the system preference.
+        }
+        const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+        document.documentElement.dataset.theme = savedTheme === 'dark' || (!savedTheme && prefersDark) ? 'dark' : 'light';
+      })();
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -59,5 +71,9 @@ const isoDate = (value?: Date) => value?.toISOString();
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
+    <footer class="site-footer page-shell">
+      <p>© {new Date().getFullYear()} {site.name}</p>
+      <a href={site.personalSite} target="_blank" rel="noreferrer">Personal site <span aria-hidden="true">↗</span></a>
+    </footer>
   </body>
 </html>

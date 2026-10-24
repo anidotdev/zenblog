@@ -1,0 +1,127 @@
+# Pages CMS: https://app.pagescms.org/
+# Changes are committed to this GitHub repository. The hosting provider then rebuilds the site.
+media:
+  - name: post_images
+    label: Post images
+    input: public/images/posts
+    output: /images/posts
+    extensions: [png, jpg, jpeg, webp, avif, svg]
+  - name: public_images
+    label: Site images
+    input: public/images
+    output: /images
+    extensions: [png, jpg, jpeg, webp, avif, svg]
+
+content:
+  - name: posts
+    label: Articles
+    type: collection
+    path: src/content/posts
+    filename:
+      template: "{primary}.md"
+      field: create
+    format: yaml-frontmatter
+    view:
+      primary: title
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: summary
+        label: One-line summary
+        type: text
+        required: true
+      - name: date
+        label: Publication date
+        type: date
+        required: true
+      - name: draft
+        label: Draft (hide from public site)
+        type: boolean
+        required: true
+        description: Keep enabled until the article and its links are ready to publish.
+      - name: featured
+        label: Feature on homepage
+        type: boolean
+      - name: tags
+        label: Topic labels
+        type: string
+        list: true
+      - name: thumbnail
+        label: Thumbnail
+        type: image
+        options:
+          media: post_images
+          rename: safe
+      - name: thumbnailAlt
+        label: Thumbnail description
+        type: text
+      - name: artifactSummary
+        label: Artifact introduction
+        type: text
+      - name: artifactUrl
+        label: Artifact or source-file URL
+        type: string
+        description: Optional link to a downloadable artifact or source file.
+      - name: repoUrl
+        label: Repository URL
+        type: string
+        description: Link to the source repository, when available.
+      - name: caption
+        label: Figure caption
+        type: text
+      - name: updatedDate
+        label: Last updated
+        type: date
+      - name: body
+        label: Article body
+        type: rich-text
+        required: true
+        options:
+          format: markdown
+          switcher: true
+          media: post_images
+          rename: safe
+
+  - name: site_settings
+    label: Site settings
+    type: file
+    path: src/data/site.json
+    format: json
+    fields:
+      - name: name
+        label: Display name
+        type: string
+        required: true
+      - name: pitch
+        label: Homepage pitch
+        type: text
+        required: true
+      - name: description
+        label: SEO description
+        type: text
+        required: true
+      - name: siteUrl
+        label: Canonical production URL
+        type: string
+        required: true
+      - name: github
+        label: GitHub URL
+        type: string
+      - name: linkedin
+        label: LinkedIn URL
+        type: string
+      - name: x
+        label: X URL
+        type: string
+      - name: email
+        label: Email address
+        type: string
+      - name: repositoryUrl
+        label: Main source repository URL
+        type: string
+        description: Used for article source links unless an article has its own repository URL.
+

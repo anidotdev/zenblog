@@ -1,0 +1,42 @@
+---
+import PostMeta from './PostMeta.astro';
+import site from '../data/site.json';
+
+interface Props {
+  post: any;
+  featured?: boolean;
+}
+const { post, featured = false } = Astro.props;
+const alt = post.data.thumbnailAlt || `${post.data.title} illustration`;
+const repositoryUrl = post.data.repoUrl || site.repositoryUrl;
+---
+<article class:list={['post-card', { 'post-card-featured': featured, 'post-card-no-image': !post.data.thumbnail }]}>
+  {post.data.thumbnail && (
+    <a class="post-card-image-link" href={`/posts/${post.id}/`} aria-hidden="true" tabindex="-1">
+      <img
+        class="post-card-image"
+        src={post.data.thumbnail}
+        alt={alt}
+        loading={featured ? 'eager' : 'lazy'}
+        decoding="async"
+        width="1200"
+        height="800"
+      />
+    </a>
+  )}
+  <div class="post-card-copy">
+    {featured ? (
+      <h2 class="post-card-title"><a href={`/posts/${post.id}/`}>{post.data.title}</a></h2>
+    ) : (
+      <h3 class="post-card-title"><a href={`/posts/${post.id}/`}>{post.data.title}</a></h3>
+    )}
+    <p class="post-card-summary">{post.data.summary}</p>
+    {(post.data.artifactUrl || repositoryUrl) && (
+      <div class="post-card-resources">
+        {post.data.artifactUrl && <a href={post.data.artifactUrl}>Code ↗</a>}
+        {repositoryUrl && <a href={repositoryUrl} target="_blank" rel="noreferrer">Repository ↗</a>}
+      </div>
+    )}
+    <PostMeta date={post.data.date} tags={post.data.tags} />
+  </div>
+</article>

@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import PostCard from '../components/PostCard.astro';
+import site from '../data/site.json';
+import { sortNewestFirst } from '../lib/posts';
+
+const posts = sortNewestFirst(await getCollection('posts', ({ data }) => !data.draft));
+const featured = posts.find((post) => post.data.featured) ?? posts[0];
+const remainingPosts = posts.filter((post) => post.id !== featured?.id);
+---
+<BaseLayout title={site.name} description={site.description} path="/">
+  <SiteHeader />
+  <main id="main" class="page-shell home-main">
+    <section class="intro" aria-labelledby="intro-title">
+      <h1 id="intro-title">{site.name}</h1>
+      <p class="intro-pitch">{site.pitch}</p>
+    </section>
+
+    {featured && <PostCard post={featured} featured={true} />}
+
+    {remainingPosts.length > 0 && (
+      <section class="post-index" aria-label="More articles">
+        <div class="post-list">
+          {remainingPosts.map((post) => <PostCard post={post} />)}
+        </div>
+      </section>
+    )}
+  </main>
+</BaseLayout>

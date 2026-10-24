@@ -1,0 +1,17 @@
+---
+interface Props {
+  date: Date;
+  tags?: string[];
+  updatedDate?: Date;
+}
+const { date, tags = [], updatedDate } = Astro.props;
+const formatDate = (value: Date) => new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
+}).format(value);
+---
+<div class="post-meta">
+  <time datetime={date.toISOString()}>{formatDate(date)}</time>
+  {updatedDate && <><span class="meta-separator" aria-hidden="true">·</span><span>Updated {formatDate(updatedDate)}</span></>}
+  {tags.length > 0 && <span class="meta-separator" aria-hidden="true">·</span>}
+  {tags.map((tag) => <span class="meta-tag">{tag}</span>)}
+</div>

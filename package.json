@@ -1,0 +1,31 @@
+{
+  "name": "first-principles-journal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A typographic engineering journal for ML, inference, and systems work.",
+  "scripts": {
+    "dev": "astro dev",
+    "predev": "node scripts/sync-ols-example.mjs",
+    "build": "astro check && astro build",
+    "prebuild": "node scripts/sync-ols-example.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "sync:ols": "node scripts/sync-ols-example.mjs",
+    "test:ols": "python -m unittest discover -s tests -v"
+  },
+  "dependencies": {
+    "astro": "^5.7.10",
+    "@astrojs/sitemap": "^3.2.1",
+    "katex": "^0.16.21",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.11.1"
+  }
+}

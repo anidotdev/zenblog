@@ -1,0 +1,18 @@
+---
+import site from '../data/site.json';
+const socialLinks = [
+  { label: 'GitHub', href: site.github },
+  { label: 'LinkedIn', href: site.linkedin },
+  { label: 'X', href: site.x },
+  { label: 'Email', href: site.email ? `mailto:${site.email}` : '' },
+].filter((link) => link.href?.trim());
+---
+<header class="site-header page-shell">
+  <nav class="social-nav" aria-label="External links">
+    {socialLinks.map((link) => (
+      <a href={link.href} target={link.href.startsWith('mailto:') ? undefined : '_blank'} rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}>
+        {link.label}<span aria-hidden="true"> ↗</span>
+      </a>
+    ))}
+  </nav>
+</header>

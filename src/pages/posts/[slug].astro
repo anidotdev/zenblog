@@ -1,0 +1,86 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import PostMeta from '../../components/PostMeta.astro';
+import site from '../../data/site.json';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const date = post.data.date;
+const updatedDate = post.data.updatedDate;
+const image = post.data.thumbnail || '/images/og-default.png';
+const sectionHeadings = headings.filter((heading) => heading.depth === 2);
+const articleUrl = new URL(`/posts/${post.id}/`, site.siteUrl).toString();
+const repositoryUrl = post.data.repoUrl || site.repositoryUrl;
+const structuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: post.data.title,
+  description: post.data.summary,
+  datePublished: date.toISOString(),
+  ...(updatedDate ? { dateModified: updatedDate.toISOString() } : {}),
+  author: { '@type': 'Person', name: site.name },
+  mainEntityOfPage: articleUrl,
+  image: new URL(image, site.siteUrl).toString(),
+}).replace(/</g, '\\u003c');
+---
+<BaseLayout
+  title={post.data.title}
+  description={post.data.summary}
+  path={`/posts/${post.id}/`}
+  ogImage={image}
+  type="article"
+  publishedTime={date}
+  modifiedTime={updatedDate}
+>
+  <SiteHeader />
+  <main id="main" class="page-shell article-shell">
+    <a class="back-link" href="/">← All posts</a>
+
+    <header class="article-header">
+      <h1>{post.data.title}</h1>
+      <p class="article-deck">{post.data.summary}</p>
+      <PostMeta date={date} tags={post.data.tags} updatedDate={updatedDate} />
+      {(repositoryUrl || post.data.artifactUrl) && (
+        <div class="article-resource-links" aria-label="Article resources">
+          {post.data.artifactUrl && <a href={post.data.artifactUrl}>Code ↗</a>}
+          {repositoryUrl && <a href={repositoryUrl} target="_blank" rel="noreferrer">Repository ↗</a>}
+        </div>
+      )}
+    </header>
+
+    {post.data.artifactSummary && <p class="artifact-summary">{post.data.artifactSummary}</p>}
+    {post.data.thumbnail && (
+      <figure class="artifact-figure">
+        <img src={post.data.thumbnail} alt={post.data.thumbnailAlt || `${post.data.title} illustration`} width="1200" height="800" fetchpriority="high" />
+        {post.data.caption && <figcaption>{post.data.caption}</figcaption>}
+      </figure>
+    )}
+
+    {sectionHeadings.length > 0 && (
+      <nav class="article-toc" aria-label="On this page">
+        {sectionHeadings.map((heading, index) => (
+          <span class="toc-item-wrap">
+            {index > 0 && <span class="toc-dot" aria-hidden="true">·</span>}
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </span>
+        ))}
+      </nav>
+    )}
+
+    <article class="prose" aria-label={post.data.title}>
+      <Content />
+    </article>
+
+    <footer class="article-end">
+      <a class="back-link" href="/">← All posts</a>
+    </footer>
+  </main>
+  <script type="application/ld+json" set:html={structuredData}></script>
+</BaseLayout>

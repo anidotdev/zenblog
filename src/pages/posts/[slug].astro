@@ -17,7 +17,7 @@ const updatedDate = post.data.updatedDate;
 const image = post.data.thumbnail || '/images/og-default.png';
 const sectionHeadings = headings.filter((heading) => heading.depth === 2);
 const articleUrl = new URL(`/posts/${post.id}/`, site.siteUrl).toString();
-const repositoryUrl = post.data.repoUrl || site.repositoryUrl;
+const repositoryUrl = post.data.repoUrl || '';
 const structuredData = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'TechArticle',

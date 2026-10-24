@@ -1,24 +1,46 @@
 ---
 import site from '../data/site.json';
 import { Contrast } from '@lucide/astro';
+
 const socialLinks = [
   { label: 'GitHub', href: site.github },
-  { label: 'LinkedIn', href: site.linkedin },
-  { label: 'X', href: site.x },
-  { label: 'Email', href: site.email ? `mailto:${site.email}` : '' },
-].filter((link) => link.href?.trim());
+  { label: 'LinkedIn', href: 'linkedin' in site ? site.linkedin : '' },
+  { label: 'X', href: 'x' in site ? site.x : '' },
+  {
+    label: 'Email',
+    href: 'email' in site && site.email ? `mailto:${site.email}` : '',
+  },
+].filter((link) => typeof link.href === 'string' && link.href.trim());
 ---
+
 <header class="site-header page-shell">
   <nav class="social-nav" aria-label="External links">
     {socialLinks.map((link) => (
-      <a href={link.href} target={link.href.startsWith('mailto:') ? undefined : '_blank'} rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}>
+      <a
+        href={link.href}
+        target={link.href.startsWith('mailto:') ? undefined : '_blank'}
+        rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
+      >
         {link.label}<span aria-hidden="true"> ↗</span>
       </a>
     ))}
   </nav>
-  <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">
-    <Contrast class="theme-toggle-icon" size={21} stroke-width={1.6} aria-hidden="true" />
-    <span class="visually-hidden" data-theme-toggle-label>Switch to dark theme</span>
+
+  <button
+    class="theme-toggle"
+    type="button"
+    data-theme-toggle
+    aria-label="Switch to dark theme"
+    title="Switch to dark theme"
+  >
+    <Contrast
+      class="theme-toggle-icon"
+      size={21}
+      stroke-width={1.6}
+      aria-hidden="true"
+    />
+    <span class="visually-hidden" data-theme-toggle-label>
+      Switch to dark theme
+    </span>
   </button>
 </header>
-

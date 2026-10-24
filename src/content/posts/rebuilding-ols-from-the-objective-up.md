@@ -22,13 +22,11 @@ There are two common ways to find the values of (m) and (b): Ordinary Least Squa
 
 Suppose we have the following data about the hours of study by students and the marks they have obtained:
 
+| Hours Studied (x) | 1 | 2 | 3 | 4 | 5 | ... |
 
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 
-| Hours Studied ($x$) | 1 | 2 | 3 | 4 | 5 | ... |
-
-|--------------------|---|---|---|---|---|-----|
-
-| Marks ($y$) | 2 | 3 | 5 | 6 | 4 | ... |
+| Marks (y) | 2 | 3 | 5 | 6 | 4 | ... |
 
 
 
@@ -277,7 +275,6 @@ $$
 
 
 - m\sum_{i=1}^{n}x_i
-
 - nb = 0
 
   $$

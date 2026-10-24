@@ -24,19 +24,11 @@ Suppose we have the following data about the hours of study by students and the 
 
 
 
-Hours Studied ((x))| Marks ((y))
+| Hours Studied ($x$) | 1 | 2 | 3 | 4 | 5 | ... |
 
-1| 2
+|--------------------|---|---|---|---|---|-----|
 
-2| 3
-
-3| 5
-
-4| 6
-
-5| 4
-
-...| ...
+| Marks ($y$) | 2 | 3 | 5 | 6 | 4 | ... |
 
 
 

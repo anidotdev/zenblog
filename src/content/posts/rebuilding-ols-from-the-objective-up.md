@@ -16,15 +16,15 @@ Derivation
 
 
 
-There are two common ways to find the values of m and b: Ordinary Least Squares (OLS) and Gradient Descent. Scikit-learn uses the least squares method in its "LinearRegression" class to find the best values of m and b, while "SGDRegressor" uses Stochastic Gradient Descent. Let's build the mathematical intuition behind Linear Regression.
+There are two common ways to find the values of (m) and (b): Ordinary Least Squares (OLS) and Gradient Descent. Scikit-learn uses the least squares method in its "LinearRegression" class to find the best values of (m) and (b), while "SGDRegressor" uses Stochastic Gradient Descent. Let's build the mathematical intuition behind Linear Regression.
 
 
 
-Suppose we have the following data about the hours of study by students and the marks which they have obtained:
+Suppose we have the following data about the hours of study by students and the marks they have obtained:
 
 
 
-Hours Studied (x)| Marks (y)
+Hours Studied ((x))| Marks ((y))
 
 1| 2
 
@@ -40,19 +40,23 @@ Hours Studied (x)| Marks (y)
 
 
 
-Each row in this table is one observation and we have a total of n observations. We will plot these observations on a graph with x on the horizontal axis and y on the vertical axis. Since the data follows a variable pattern, it is likely that these points will not lie exactly on a straight line. And that is exactly what we want to do in Linear Regression: find the best possible line that comes as close as possible to all the points.
+Each row in this table is one observation, and we have a total of (n) observations. We will plot these observations on a graph with (x) on the horizontal axis and (y) on the vertical axis. Since the data follows a variable pattern, it is likely that these points will not lie exactly on a straight line. And that is exactly what we want to do in Linear Regression: find the best possible line that comes as close as possible to all the points.
 
 
 
-And we all know that the equation of a straight line is:
+We all know that the equation of a straight line is:
 
 
 
-$$\boxed{\hat{y} = mx + b}$$
+$$
+
+\boxed{\hat{y} = mx + b}
+
+$$
 
 
 
-Here, x is the input or independent variable, y is the actual observed output, ŷ (read as y-hat) is the output predicted by our line, m is the slope of the line, and b is the y-intercept. In machine learning terminology, finding the values of m and b is called training the model.
+Here, (x) is the input or independent variable, (y) is the actual observed output, (\hat{y}) (read as y-hat) is the output predicted by our line, (m) is the slope of the line, and (b) is the y-intercept. In machine learning terminology, finding the values of (m) and (b) is called training the model.
 
 
 
@@ -60,35 +64,51 @@ Residual
 
 
 
-Let's assume that we have drawn a straight line through the data points in the graph and for every data point, the line predicts a value ŷᵢ. Therefore, for the ith observation,
+Let's assume that we have drawn a straight line through the data points in the graph, and for every data point, the line predicts a value (\hat{y}_i). Therefore, for the (i)-th observation,
 
 
 
-$$\boxed{\hat{y}_i = mx_i + b}$$
+$$
+
+\boxed{\hat{y}_i = mx_i + b}
+
+$$
 
 
 
-Here, ŷᵢ is the predicted value and yᵢ is the actual observed value. The difference between the actual and predicted values is called the residual.
+Here, (\hat{y}_i) is the predicted value and (y_i) is the actual observed value. The difference between the actual and predicted values is called the residual.
 
 
 
-$$\boxed{d_i = y_i - \hat{y}_i}$$
+$$
+
+\boxed{d_i = y_i - \hat{y}_i}
+
+$$
 
 
 
-And substituting the equation of the line gives us:
+Substituting the equation of the line gives us:
 
 
 
-$$\boxed{d_i = y_i - mx_i - b}$$
+$$
+
+\boxed{d_i = y_i - mx_i - b}
+
+$$
 
 
 
-Let's take an example. Suppose an observation has x = 2 and its actual y = 3, and our current line is:
+Let's take an example. Suppose an observation has (x = 2) and its actual (y = 3), and our current line is:
 
 
 
-$$\hat{y} = 1.5x + 0.5$$
+$$
+
+\hat{y} = 1.5x + 0.5
+
+$$
 
 
 
@@ -96,15 +116,23 @@ Therefore, the predicted value for this observation will be:
 
 
 
-$$\hat{y} = 1.5(2) + 0.5 = 3.5$$
+$$
+
+\hat{y} = 1.5(2) + 0.5 = 3.5
+
+$$
 
 
 
-But the actual value is 3. So the residual becomes:
+But the actual value is (3). So the residual becomes:
 
 
 
-$$d = 3 - 3.5 = -0.5$$
+$$
+
+d = 3 - 3.5 = -0.5
+
+$$
 
 
 
@@ -120,15 +148,19 @@ One way to calculate the total error is to add the absolute values of all the re
 
 
 
-$$\boxed{E = |d_1| + |d_2| + |d_3| + \cdots + |d_n|}$$
+$$
+
+E = |d_1| + |d_2| + |d_3| + \cdots + |d_n|
+
+$$
 
 
 
-But there is a problem with using absolute values. The absolute value function is not differentiable at zero, which makes it difficult to directly use the standard derivative-based approach to find the minimum error.
+But there is a problem with using absolute values. The absolute value function is not differentiable at zero, which makes it less convenient to minimize directly using standard derivative-based methods.
 
 
 
-So, instead of taking absolute values, we square each residual and then add them together. The square function is differentiable, which makes it easier to find the minimum error using calculus. Also, squaring the residuals penalizes larger errors more heavily, which means that outliers can have a much greater impact on the total error.
+So, instead of taking absolute values, we square each residual and then add them together. The squared-error function is differentiable, which makes it easier to find the minimum error using calculus. Also, squaring the residuals penalizes larger errors more heavily, which means that outliers can have a much greater impact on the total error.
 
 
 
@@ -136,15 +168,23 @@ Therefore, our error function becomes:
 
 
 
-$$\boxed{E = d_1^2 + d_2^2 + d_3^2 + \cdots + d_n^2}$$
+$$
+
+E = d_1^2 + d_2^2 + d_3^2 + \cdots + d_n^2
+
+$$
 
 
 
-And using summation notation, we can write it as:
+Using summation notation, we can write it as:
 
 
 
-$$\boxed{E = \sum_{i=1}^{n} d_i^2}$$
+$$
+
+\boxed{E = \sum_{i=1}^{n} d_i^2}
+
+$$
 
 
 
@@ -152,55 +192,103 @@ Now, substituting the residual equation into this expression gives us:
 
 
 
-$$\boxed{E(m,b) = \sum_{i=1}^{n}(y_i - mx_i - b)^2}$$
+$$
+
+\boxed{E(m,b) = \sum_{i=1}^{n}(y_i - mx_i - b)^2}
+
+$$
 
 
 
-This is the Sum of Squared Errors (SSE). Notice that our error function depends on m and b. Different values of m and b will give us different lines, each with a different total error. Our goal is to find the values of m and b that produce the minimum error.
+This is the Sum of Squared Errors (SSE). Notice that our error function depends on (m) and (b). Different values of (m) and (b) will give us different lines, each with a different total error. Our goal is to find the values of (m) and (b) that produce the minimum error.
 
 
 
-Finding m and b
+Finding (m) and (b)
 
 
 
-Think of the error function as a surface where the two axes represent m and b, and the height represents the error E. Every point on this surface represents some combination of m and b, and we want to find the lowest point on this surface. In calculus, we know that the derivative of a differentiable function is zero at an interior minimum. Since our error function depends on two variables, we take the partial derivatives with respect to both m and b and set them equal to zero:
+Think of the error function as a surface where the two axes represent (m) and (b), and the height represents the error (E). Every point on this surface represents some combination of (m) and (b), and we want to find the lowest point on this surface.
 
 
 
-$$\boxed{\frac{\partial E}{\partial m}=0 \qquad \text{and} \qquad \frac{\partial E}{\partial b}=0}$$
+For a differentiable function, the first derivatives must be zero at an interior minimum. Since our error function depends on two variables, we take the partial derivatives with respect to both (m) and (b) and set them equal to zero:
 
 
 
-Let's first find b. We have:
+$$
+
+\boxed{
+
+\frac{\partial E}{\partial m}=0
+
+\qquad \text{and} \qquad
+
+\frac{\partial E}{\partial b}=0
+
+}
+
+$$
 
 
 
-$$E(m,b) = \sum_{i=1}^{n}(y_i - mx_i - b)^2$$
+Finding (b)
 
 
 
-Taking the partial derivative with respect to b gives us:
+We have:
 
 
 
-$$\frac{\partial E}{\partial b} = -2\sum_{i=1}^{n}(y_i - mx_i - b) = 0$$
+$$
+
+E(m,b) = \sum_{i=1}^{n}(y_i - mx_i - b)^2
+
+$$
 
 
 
-Dividing both sides by −2, we get:
+Taking the partial derivative with respect to (b) gives us:
 
 
 
-$$\sum_{i=1}^{n}(y_i - mx_i - b) = 0$$
+$$
+
+\frac{\partial E}{\partial b}
+
+= -2\sum_{i=1}^{n}(y_i - mx_i - b) = 0
+
+$$
 
 
 
-Now, expanding the summation gives us:
+Dividing both sides by (-2), we get:
 
 
 
-$$\sum_{i=1}^{n}y_i - m\sum_{i=1}^{n}x_i - nb = 0$$
+$$
+
+\sum_{i=1}^{n}(y_i - mx_i - b) = 0
+
+$$
+
+
+
+Expanding the summation gives us:
+
+
+
+$$
+
+\sum_{i=1}^{n}y_i
+
+
+
+- m\sum_{i=1}^{n}x_i
+
+- nb = 0
+
+  $$
 
 
 
@@ -208,51 +296,103 @@ Rearranging the terms:
 
 
 
-$$b = \frac{\sum_{i=1}^{n}y_i}{n} - m\frac{\sum_{i=1}^{n}x_i}{n}$$
+$$
+
+b = \frac{\sum_{i=1}^{n}y_i}{n}
 
 
 
-We know that the mean of x is represented by x̄ and the mean of y is represented by ȳ. Therefore, we can write the above equation as:
+- m\frac{\sum_{i=1}^{n}x_i}{n}
+
+  $$
 
 
 
-$$\boxed{b = \bar{y} - m\bar{x}}$$
+We know that the mean of (x) is represented by (\bar{x}) and the mean of (y) is represented by (\bar{y}). Therefore, we can write the above equation as:
 
 
 
-And there we have our first result. We can find the intercept if we know the slope and the means of x and y.
+$$
+
+\boxed{b = \bar{y} - m\bar{x}}
+
+$$
 
 
 
-Now, let's find m. We already know that:
+And there we have our first result. We can find the intercept if we know the slope and the means of (x) and (y).
 
 
 
-$$b = \bar{y} - m\bar{x}$$
+Finding (m)
 
 
 
-Substituting this value of b into our error function gives us:
+We already know that:
 
 
 
-$$E(m) = \sum_{i=1}^{n}\left[(y_i-\bar{y})-m(x_i-\bar{x})\right]^2$$
+$$
+
+b = \bar{y} - m\bar{x}
+
+$$
 
 
 
-Now, we take the derivative with respect to m and set it equal to zero. After applying the chain rule, we get:
+Substituting this value of (b) into our error function gives us:
 
 
 
-$$\sum_{i=1}^{n}\left"(y_i-\bar{y})-m(x_i-\bar{x})\right" (x_i-\bar{x}) = 0$$
+$$
+
+E(m) =
+
+\sum_{i=1}^{n}
+
+\left[(y_i-\bar{y})-m(x_i-\bar{x})\right]^2
+
+$$
 
 
 
-Expanding the expression gives us:
+Now, we take the derivative with respect to (m) and set it equal to zero. Applying the chain rule gives us:
 
 
 
-$$\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y}) - m\sum_{i=1}^{n}(x_i-\bar{x})^2 = 0$$
+$$
+
+\frac{dE}{dm}
+
+
+
+-2\sum_{i=1}^{n}
+
+(x_i-\bar{x})
+
+\left[(y_i-\bar{y})-m(x_i-\bar{x})\right]
+
+= 0
+
+$$
+
+
+
+Dividing both sides by (-2) and expanding the expression gives us:
+
+
+
+$$
+
+\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})
+
+
+
+m\sum_{i=1}^{n}(x_i-\bar{x})^2
+
+= 0
+
+$$
 
 
 
@@ -260,23 +400,53 @@ Rearranging the terms, we get:
 
 
 
-$$\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y}) = m\sum_{i=1}^{n}(x_i-\bar{x})^2$$
+$$
+
+\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})
 
 
 
-And finally, dividing both sides by the sum of squared deviations of x gives us:
+m\sum_{i=1}^{n}(x_i-\bar{x})^2
+
+$$
 
 
 
-$$\boxed{m = \frac{\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})}{\sum_{i=1}^{n}(x_i-\bar{x})^2}}$$
+Finally, dividing both sides by the sum of squared deviations of (x) gives us:
 
 
 
-And there we have it. We have derived the formula for the slope using OLS. Now that we have both m and b, we can plug them back into our original equation:
+$$
+
+\boxed{
+
+m =
+
+\frac{
+
+\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})
+
+}{
+
+\sum_{i=1}^{n}(x_i-\bar{x})^2
+
+}
+
+}
+
+$$
 
 
 
-$$\boxed{\hat{y} = mx + b}$$
+And there we have it. We have derived the formula for the slope using OLS. Once we have both (m) and (b), we can plug them back into our original equation:
+
+
+
+$$
+
+\boxed{\hat{y} = mx + b}
+
+$$
 
 
 

@@ -1,6 +1,8 @@
 ---
-title: "Rebuilding OLS from the objective up"
-summary: "Start with the squared-error objective, derive the normal equation, then solve the problem without explicitly inverting a matrix."
+title: Rebuilding OLS from the objective up
+summary: Understanding Linear Regression from scratch, deriving the error
+  function, and finding the optimal slope and intercept using Ordinary Least
+  Squares (OLS) and calculus.
 date: 2026-10-24
 draft: false
 featured: true
@@ -8,102 +10,274 @@ tags:
   - linear algebra
   - machine learning
   - from scratch
-thumbnail: "/images/posts/ols-fit.svg"
-thumbnailAlt: "A set of observations around an oxblood least-squares regression line on a quiet coordinate grid."
-artifactSummary: "A small NumPy estimator that fits an intercept and coefficients with a least-squares solver. The complete source is available as a standalone file."
-artifactUrl: "/code/ols.py"
-caption: "A conceptual view of a fitted line and its residuals, included to orient the reader rather than claim a benchmark result."
+updatedDate: 2026-10-25
 ---
+Derivation
 
-Linear regression is often introduced as a formula and then hidden behind a single library call. I wanted to work through the part between those two things: what objective are we minimizing, how does the solution follow from it, and what does a small implementation need to get right?
 
-This is an educational baseline, not a drop-in replacement for scikit-learn. It handles dense, finite, two-dimensional feature matrices and a one-dimensional target. It deliberately leaves out sample weights, sparse inputs, multi-output regression, statistical inference, and the rest of a production estimator's interface.
 
-## The objective
+There are two common ways to find the values of m and b: Ordinary Least Squares (OLS) and Gradient Descent. Scikit-learn uses the least squares method in its "LinearRegression" class to find the best values of m and b, while "SGDRegressor" uses Stochastic Gradient Descent. Let's build the mathematical intuition behind Linear Regression.
 
-Given a design matrix \(X\), target vector \(y\), and coefficient vector \(\beta\), ordinary least squares chooses the coefficients that minimize the sum of squared residuals:
 
-$$
-\hat{\beta} = \arg\min_{\beta} \|y - X\beta\|_2^2
-$$
 
-For a model with an intercept, the simplest representation is to prepend a column of ones to \(X\). The intercept then becomes the first coefficient, so the same least-squares objective handles both the offset and the feature weights.
+Suppose we have the following data about the hours of study by students and the marks which they have obtained:
 
-Let the objective be \(J(\beta) = (y-X\beta)^T(y-X\beta)\). Expanding the expression gives:
 
-$$
-J(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta
-$$
 
-Taking the gradient with respect to \(\beta\):
+Hours Studied (x)| Marks (y)
 
-$$
-\nabla_\beta J = -2X^Ty + 2X^TX\beta
-$$
+1| 2
 
-At a stationary point, the gradient is zero. That gives the normal equation:
+2| 3
 
-$$
-X^TX\hat{\beta}=X^Ty
-$$
+3| 5
 
-When the columns of \(X\) are linearly independent, the coefficient vector is unique and can be written as:
+4| 6
 
-$$
-\hat{\beta}=(X^TX)^{-1}X^Ty
-$$
+5| 4
 
-That expression is useful for understanding the solution. It does not mean that explicitly computing the inverse is the best implementation strategy.
+...| ...
 
-## The implementation
 
-The implementation in this repository calls [NumPy’s `linalg.lstsq`](https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html) on the design matrix directly. It avoids forming the inverse of \(X^TX\), exposes the fitted coefficients and intercept, and records the rank and singular values returned by the solver.
 
-The core operation is small:
+Each row in this table is one observation and we have a total of n observations. We will plot these observations on a graph with x on the horizontal axis and y on the vertical axis. Since the data follows a variable pattern, it is likely that these points will not lie exactly on a straight line. And that is exactly what we want to do in Linear Regression: find the best possible line that comes as close as possible to all the points.
 
-```python
-solution, residuals, rank, singular_values = np.linalg.lstsq(
-    design, y_array, rcond=None
-)
-```
 
-The rest is mostly contract enforcement: check dimensions, verify that the number of rows matches the number of targets, reject non-finite values, and make sure `predict` receives the same number of features seen during fitting.
 
-A small class is useful here because it makes the fitted state explicit. The model stores `coef_`, `intercept_`, `n_features_in_`, `rank_`, `singular_values_`, and the residual sum of squares. These names are familiar to people who have used estimator APIs, but the class does not claim API compatibility with scikit-learn.
+And we all know that the equation of a straight line is:
 
-## What the tests establish
 
-The tests use a synthetic target with a known linear relationship. The fitted intercept and coefficients are checked against the known values, and predictions are checked against the target. There are also tests for a model without an intercept, inconsistent input shapes, non-finite values, prediction before fitting, and a rank-deficient design matrix.
 
-Run the tests from the project root after installing NumPy:
+$$\boxed{\hat{y} = mx + b}$$
 
-```bash
-python -m pip install -r requirements.txt
-python -m unittest discover -s tests -v
-```
 
-These tests establish behavior for the cases they cover. They do not establish parity with scikit-learn, performance superiority, or robustness across every numerical regime. A broader comparison would need a fixed experiment matrix, carefully chosen tolerances, and explicit treatment of rank and conditioning.
 
-## What broke / where it can diverge
+Here, x is the input or independent variable, y is the actual observed output, ŷ (read as y-hat) is the output predicted by our line, m is the slope of the line, and b is the y-intercept. In machine learning terminology, finding the values of m and b is called training the model.
 
-### The inverse is a derivation, not an instruction
 
-Explicitly computing \((X^TX)^{-1}\) can amplify numerical error. Forming \(X^TX\) also squares the condition number of the design matrix in the usual 2-norm setting. A direct least-squares solver is a better default for the implementation, while the normal equation remains a useful derivation of the optimum.
 
-### Rank deficiency changes what can be identified
+Residual
 
-If one feature is an exact linear combination of another, there is no unique coefficient vector. The predictions may still be well-defined over the observed design space, even though multiple coefficient vectors minimize the same objective. The implementation records the rank reported by the solver so that this situation is visible rather than silently treating every fit as full-rank.
 
-### Good fit does not imply a good model
 
-OLS minimizes squared residuals on the supplied observations. It does not guarantee that the relationship generalizes, that the errors satisfy a statistical model, or that a coefficient has a causal interpretation. Those are separate questions and need separate assumptions and diagnostics.
+Let's assume that we have drawn a straight line through the data points in the graph and for every data point, the line predicts a value ŷᵢ. Therefore, for the ith observation,
 
-### The interface is intentionally incomplete
 
-This implementation does not yet support sparse matrices, sample weights, multiple target columns, missing-value handling, or the broader estimator conventions of scikit-learn. Matching one small synthetic case is not enough to call it a drop-in replacement. That claim would require parity tests across documented behavior and edge cases.
 
-## What I would test next
+$$\boxed{\hat{y}_i = mx_i + b}$$
 
-The next useful experiment is a reproducible comparison against [`sklearn.linear_model.LinearRegression`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html) across well-conditioned, nearly collinear, and rank-deficient inputs. I would record prediction error, coefficient differences where coefficients are identifiable, runtime, and behavior as feature scales diverge. Results should be saved with the test setup and tolerance choices, not reduced to one “matches” number.
 
-The point of rebuilding a familiar algorithm is not to produce another formula-shaped class. It is to make the assumptions and numerical choices visible enough that the boundaries of the implementation can be tested.
+
+Here, ŷᵢ is the predicted value and yᵢ is the actual observed value. The difference between the actual and predicted values is called the residual.
+
+
+
+$$\boxed{d_i = y_i - \hat{y}_i}$$
+
+
+
+And substituting the equation of the line gives us:
+
+
+
+$$\boxed{d_i = y_i - mx_i - b}$$
+
+
+
+Let's take an example. Suppose an observation has x = 2 and its actual y = 3, and our current line is:
+
+
+
+$$\hat{y} = 1.5x + 0.5$$
+
+
+
+Therefore, the predicted value for this observation will be:
+
+
+
+$$\hat{y} = 1.5(2) + 0.5 = 3.5$$
+
+
+
+But the actual value is 3. So the residual becomes:
+
+
+
+$$d = 3 - 3.5 = -0.5$$
+
+
+
+The negative sign suggests that our line has predicted a value greater than the actual value. Now, this was just one observation. But what if we have thousands of observations? How do we measure how good our line is across all these points? We need an error function for this.
+
+
+
+Error Function
+
+
+
+One way to calculate the total error is to add the absolute values of all the residuals.
+
+
+
+$$\boxed{E = |d_1| + |d_2| + |d_3| + \cdots + |d_n|}$$
+
+
+
+But there is a problem with using absolute values. The absolute value function is not differentiable at zero, which makes it difficult to directly use the standard derivative-based approach to find the minimum error.
+
+
+
+So, instead of taking absolute values, we square each residual and then add them together. The square function is differentiable, which makes it easier to find the minimum error using calculus. Also, squaring the residuals penalizes larger errors more heavily, which means that outliers can have a much greater impact on the total error.
+
+
+
+Therefore, our error function becomes:
+
+
+
+$$\boxed{E = d_1^2 + d_2^2 + d_3^2 + \cdots + d_n^2}$$
+
+
+
+And using summation notation, we can write it as:
+
+
+
+$$\boxed{E = \sum_{i=1}^{n} d_i^2}$$
+
+
+
+Now, substituting the residual equation into this expression gives us:
+
+
+
+$$\boxed{E(m,b) = \sum_{i=1}^{n}(y_i - mx_i - b)^2}$$
+
+
+
+This is the Sum of Squared Errors (SSE). Notice that our error function depends on m and b. Different values of m and b will give us different lines, each with a different total error. Our goal is to find the values of m and b that produce the minimum error.
+
+
+
+Finding m and b
+
+
+
+Think of the error function as a surface where the two axes represent m and b, and the height represents the error E. Every point on this surface represents some combination of m and b, and we want to find the lowest point on this surface. In calculus, we know that the derivative of a differentiable function is zero at an interior minimum. Since our error function depends on two variables, we take the partial derivatives with respect to both m and b and set them equal to zero:
+
+
+
+$$\boxed{\frac{\partial E}{\partial m}=0 \qquad \text{and} \qquad \frac{\partial E}{\partial b}=0}$$
+
+
+
+Let's first find b. We have:
+
+
+
+$$E(m,b) = \sum_{i=1}^{n}(y_i - mx_i - b)^2$$
+
+
+
+Taking the partial derivative with respect to b gives us:
+
+
+
+$$\frac{\partial E}{\partial b} = -2\sum_{i=1}^{n}(y_i - mx_i - b) = 0$$
+
+
+
+Dividing both sides by −2, we get:
+
+
+
+$$\sum_{i=1}^{n}(y_i - mx_i - b) = 0$$
+
+
+
+Now, expanding the summation gives us:
+
+
+
+$$\sum_{i=1}^{n}y_i - m\sum_{i=1}^{n}x_i - nb = 0$$
+
+
+
+Rearranging the terms:
+
+
+
+$$b = \frac{\sum_{i=1}^{n}y_i}{n} - m\frac{\sum_{i=1}^{n}x_i}{n}$$
+
+
+
+We know that the mean of x is represented by x̄ and the mean of y is represented by ȳ. Therefore, we can write the above equation as:
+
+
+
+$$\boxed{b = \bar{y} - m\bar{x}}$$
+
+
+
+And there we have our first result. We can find the intercept if we know the slope and the means of x and y.
+
+
+
+Now, let's find m. We already know that:
+
+
+
+$$b = \bar{y} - m\bar{x}$$
+
+
+
+Substituting this value of b into our error function gives us:
+
+
+
+$$E(m) = \sum_{i=1}^{n}\left[(y_i-\bar{y})-m(x_i-\bar{x})\right]^2$$
+
+
+
+Now, we take the derivative with respect to m and set it equal to zero. After applying the chain rule, we get:
+
+
+
+$$\sum_{i=1}^{n}\left"(y_i-\bar{y})-m(x_i-\bar{x})\right" (x_i-\bar{x}) = 0$$
+
+
+
+Expanding the expression gives us:
+
+
+
+$$\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y}) - m\sum_{i=1}^{n}(x_i-\bar{x})^2 = 0$$
+
+
+
+Rearranging the terms, we get:
+
+
+
+$$\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y}) = m\sum_{i=1}^{n}(x_i-\bar{x})^2$$
+
+
+
+And finally, dividing both sides by the sum of squared deviations of x gives us:
+
+
+
+$$\boxed{m = \frac{\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})}{\sum_{i=1}^{n}(x_i-\bar{x})^2}}$$
+
+
+
+And there we have it. We have derived the formula for the slope using OLS. Now that we have both m and b, we can plug them back into our original equation:
+
+
+
+$$\boxed{\hat{y} = mx + b}$$
+
+
+
+And this is how we find the best-fitting straight line using Ordinary Least Squares.

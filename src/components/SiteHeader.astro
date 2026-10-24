@@ -2,15 +2,17 @@
 import site from '../data/site.json';
 import { Contrast } from '@lucide/astro';
 
-const socialLinks = [
+const socialLinks: { label: string; href: string }[] = [
   { label: 'GitHub', href: site.github },
-  { label: 'LinkedIn', href: 'linkedin' in site ? site.linkedin : '' },
-  { label: 'X', href: 'x' in site ? site.x : '' },
+  { label: 'LinkedIn', href: 'linkedin' in site ? String(site.linkedin ?? '') : '' },
+  { label: 'X', href: 'x' in site ? String(site.x ?? '') : '' },
   {
     label: 'Email',
-    href: 'email' in site && site.email ? `mailto:${site.email}` : '',
+    href: 'email' in site && site.email
+      ? `mailto:${site.email}`
+      : '',
   },
-].filter((link) => typeof link.href === 'string' && link.href.trim());
+].filter((link) => link.href.trim().length > 0);
 ---
 
 <header class="site-header page-shell">

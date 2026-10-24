@@ -8,7 +8,7 @@ interface Props {
 }
 const { post, featured = false } = Astro.props;
 const alt = post.data.thumbnailAlt || `${post.data.title} illustration`;
-const repositoryUrl = post.data.repoUrl || site.repositoryUrl;
+const repositoryUrl = post.data.repoUrl || '';
 ---
 <article class:list={['post-card', { 'post-card-featured': featured, 'post-card-no-image': !post.data.thumbnail }]}>
   {post.data.thumbnail && (

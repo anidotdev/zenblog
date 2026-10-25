@@ -1,14 +1,31 @@
 ---
 import site from '../data/site.json';
+<<<<<<< HEAD
 import { Contrast, Github } from '@lucide/astro';
 
 const socialLinks: { label: string; href: string }[] = [
   { label: 'LinkedIn', href: site.linkedin },
   { label: 'X', href: site.x },
   { label: 'Email', href: site.email ? `mailto:${site.email}` : '' },
+=======
+import { Contrast } from '@lucide/astro';
+
+const socialLinks: { label: string; href: string }[] = [
+  { label: 'GitHub', href: site.github },
+  { label: 'LinkedIn', href: 'linkedin' in site ? String(site.linkedin ?? '') : '' },
+  { label: 'X', href: 'x' in site ? String(site.x ?? '') : '' },
+  {
+    label: 'Email',
+    href: 'email' in site && site.email
+      ? `mailto:${site.email}`
+      : '',
+  },
+>>>>>>> ae66988d97d642f05087784bc7d291f4209519d6
 ].filter((link) => link.href.trim().length > 0);
 ---
+
 <header class="site-header page-shell">
+<<<<<<< HEAD
   {socialLinks.length > 0 && (
     <nav class="social-nav" aria-label="External links">
       {socialLinks.map((link) => (
@@ -40,4 +57,35 @@ const socialLinks: { label: string; href: string }[] = [
       <span class="visually-hidden" data-theme-toggle-label>Switch to dark theme</span>
     </button>
   </div>
+=======
+  <nav class="social-nav" aria-label="External links">
+    {socialLinks.map((link) => (
+      <a
+        href={link.href}
+        target={link.href.startsWith('mailto:') ? undefined : '_blank'}
+        rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
+      >
+        {link.label}<span aria-hidden="true"> ↗</span>
+      </a>
+    ))}
+  </nav>
+
+  <button
+    class="theme-toggle"
+    type="button"
+    data-theme-toggle
+    aria-label="Switch to dark theme"
+    title="Switch to dark theme"
+  >
+    <Contrast
+      class="theme-toggle-icon"
+      size={21}
+      stroke-width={1.6}
+      aria-hidden="true"
+    />
+    <span class="visually-hidden" data-theme-toggle-label>
+      Switch to dark theme
+    </span>
+  </button>
+>>>>>>> ae66988d97d642f05087784bc7d291f4209519d6
 </header>

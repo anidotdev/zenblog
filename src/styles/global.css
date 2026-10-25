@@ -161,6 +161,43 @@ h4 {
   padding-block: 1.1rem 0.6rem;
 }
 
+.header-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  margin-left: auto;
+}
+
+.github-link {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  color: var(--muted);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 140ms ease;
+}
+
+.github-link:hover {
+  color: var(--ink);
+}
+
+.github-link:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.github-icon {
+  display: block;
+  flex: 0 0 auto;
+}
+
 .theme-toggle {
   display: inline-grid;
   flex: 0 0 auto;
@@ -728,6 +765,12 @@ h4 {
     font-size: 0.76rem;
   }
 
+  .header-actions {
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .github-link,
   .theme-toggle {
     width: 34px;
     height: 34px;

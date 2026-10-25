@@ -24,7 +24,7 @@ npm install
 npm run dev
 ```
 
-The theme control uses the official `@lucide/astro` package and its `Contrast` icon. Use npm for dependency installation; the project intentionally does not include a stale pnpm lockfile.
+The header places a GitHub icon link beside the light/dark theme control. Both icons use `@lucide/astro`. Use npm for dependency installation; the project intentionally does not include a stale pnpm lockfile.
 
 Astro prints the local development URL. Before publishing, run:
 
@@ -93,7 +93,7 @@ The template is intentionally flexible. Keep sections only when the work needs t
 Edit **Site settings** in Pages CMS or `src/data/site.json` directly:
 
 - `name`, `pitch`, and `description` control the identity and metadata.
-- `github`, `linkedin`, `x`, and `email` control the visible social links. Empty values are not rendered.
+- `github` controls the GitHub icon link beside the theme toggle. `linkedin`, `x`, and `email` control optional text links on the left side of the header. Empty values are not rendered.
 - `personalSite` controls the personal-site link in the minimal footer.
 - `repositoryUrl` is a fallback source-repository link used by articles that do not override `repoUrl`.
 - The theme toggle switches between light and dark modes and remembers the preference in the browser.

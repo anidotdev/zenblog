@@ -1,24 +1,43 @@
 ---
 import site from '../data/site.json';
-import { Contrast } from '@lucide/astro';
-const socialLinks = [
-  { label: 'GitHub', href: site.github },
+import { Contrast, Github } from '@lucide/astro';
+
+const socialLinks: { label: string; href: string }[] = [
   { label: 'LinkedIn', href: site.linkedin },
   { label: 'X', href: site.x },
   { label: 'Email', href: site.email ? `mailto:${site.email}` : '' },
-].filter((link) => link.href?.trim());
+].filter((link) => link.href.trim().length > 0);
 ---
 <header class="site-header page-shell">
-  <nav class="social-nav" aria-label="External links">
-    {socialLinks.map((link) => (
-      <a href={link.href} target={link.href.startsWith('mailto:') ? undefined : '_blank'} rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}>
-        {link.label}<span aria-hidden="true"> ↗</span>
-      </a>
-    ))}
-  </nav>
-  <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">
-    <Contrast class="theme-toggle-icon" size={21} stroke-width={1.6} aria-hidden="true" />
-    <span class="visually-hidden" data-theme-toggle-label>Switch to dark theme</span>
-  </button>
-</header>
+  {socialLinks.length > 0 && (
+    <nav class="social-nav" aria-label="External links">
+      {socialLinks.map((link) => (
+        <a
+          href={link.href}
+          target={link.href.startsWith('mailto:') ? undefined : '_blank'}
+          rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
+        >
+          {link.label}<span aria-hidden="true"> ↗</span>
+        </a>
+      ))}
+    </nav>
+  )}
 
+  <div class="header-actions" aria-label="Site controls">
+    <a
+      class="github-link"
+      href={site.github}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="GitHub profile (opens in a new tab)"
+      title="GitHub"
+    >
+      <Github class="github-icon" size={21} stroke-width={1.7} aria-hidden="true" />
+    </a>
+
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">
+      <Contrast class="theme-toggle-icon" size={21} stroke-width={1.6} aria-hidden="true" />
+      <span class="visually-hidden" data-theme-toggle-label>Switch to dark theme</span>
+    </button>
+  </div>
+</header>

@@ -22,11 +22,13 @@ There are two common ways to find the values of (m) and (b): Ordinary Least Squa
 
 Suppose we have the following data about the hours of study by students and the marks they have obtained:
 
-| Hours Studied (x) | 1 | 2 | 3 | 4 | 5 | ... |
+<table>
 
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+  <tr><th>Hours Studied (x)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>...</td></tr>
 
-| Marks (y) | 2 | 3 | 5 | 6 | 4 | ... |
+  <tr><th>Marks (y)</th><td>2</td><td>3</td><td>5</td><td>6</td><td>4</td><td>...</td></tr>
+
+</table>
 
 
 
